@@ -170,6 +170,7 @@ html[data-theme="dark"] .ptabs button#tabList{color:#c4b5fd;}
 .zoomctl{display:inline-flex;align-items:center;gap:2px;border:1px solid var(--line2);background:var(--surf2);border-radius:9px;padding:2px;}
 .zoomctl button{border:0;background:none;width:30px;height:30px;font-size:16px;font-weight:900;color:var(--tx2);border-radius:7px;line-height:1;}
 .zoomctl button:hover{background:var(--ac-soft);color:var(--ac);}
+.print-btn{background:var(--ac-soft);border-color:var(--ac);color:var(--ac);font-weight:900;}
 .zoomctl .fit{width:auto;padding:0 10px;font-size:11.5px;font-weight:900;background:var(--ac);color:var(--ac-ink);}
 .zoomctl span{min-width:44px;text-align:center;font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:800;color:var(--tx2);}
 .searchbox{position:relative;}
@@ -234,6 +235,53 @@ mark{background:var(--ac-soft);color:var(--ac);border-radius:3px;padding:0 2px;}
 .foot .src{color:var(--tx3);}
 html[data-scale="5"] .foot .src{color:#7c3aed;font-weight:800;}
 html[data-theme="dark"][data-scale="5"] .foot .src{color:#c4b5fd;}
+
+/* ═══════════ 인쇄(A4) ═══════════ */
+.printhead{display:none;}
+@page{size:A4 landscape;margin:8mm;}
+@media print{
+  html,body{height:auto!important;overflow:visible!important;background:#fff!important;}
+  /* 인쇄는 항상 밝은 색으로 */
+  html{--bg:#fff;--surf:#fff;--surf2:#fff;--surf3:#f2f5fa;--line:#c9d4e4;--line2:#9fb2cb;
+       --tx:#0b1421;--tx2:#26364d;--tx3:#5a6c86;--tint:.10;}
+  *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;box-shadow:none!important;}
+  .hdr,.bar,.side,.grip,.mainbar,.selbar,.swipehint,.vswitch,.foot,.convnote,.blank{display:none!important;}
+  .app{display:block!important;height:auto!important;overflow:visible!important;}
+  .main{display:block!important;height:auto!important;overflow:visible!important;}
+  .tablewrap{overflow:visible!important;height:auto!important;}
+  table{zoom:var(--pz,1)!important;width:auto!important;}
+  thead{display:table-header-group;}
+  thead th{position:static!important;border-bottom:2px solid var(--line2)!important;}
+  tbody th.gcol{position:static!important;}
+  tr,.item{break-inside:avoid;page-break-inside:avoid;}
+  /* 인쇄는 한 모집단위 = 한 줄로 압축 */
+  table{table-layout:fixed;}
+  thead th{padding:5px 6px!important;}
+  th .un{font-size:10.5pt!important;} th .us{font-size:7pt!important;}
+  tbody th.gcol{font-size:10pt!important;padding:4px 2px!important;width:44px!important;}
+  td{padding:2px!important;}
+  .item{border:0!important;border-left:3px solid var(--gb)!important;border-bottom:1px solid #e6ecf6!important;
+        border-radius:0!important;padding:1.5px 4px!important;margin:0!important;background:#fff!important;
+        display:block;font-size:8pt;line-height:1.3;word-break:keep-all;}
+  .item .dp{display:inline;font-size:8pt!important;font-weight:800;}
+  .item .jn{display:inline;font-size:6.8pt!important;margin-left:3px;color:#5a6c86!important;}
+  .item .mm{display:inline;margin:0!important;}
+  .cut{color:#fff!important;font-size:7.6pt!important;padding:0 3px!important;margin-right:2px;}
+  .cuttag{font-size:6pt!important;}
+  .pct{font-size:6.2pt!important;}
+  .orig{font-size:6.2pt!important;margin-left:3px;}
+  .rec{font-size:6.6pt!important;margin-left:3px;}
+  .empty{font-size:7pt!important;padding:1px 0!important;}
+  .cut{color:#fff!important;}
+  .empty{color:#9fb2cb!important;}
+  .printhead{display:block!important;border-bottom:2.5px solid #0d9488;padding-bottom:6px;margin-bottom:8px;}
+  .printhead h2{font-size:15pt;font-weight:900;letter-spacing:-.4px;}
+  .printhead h2 em{font-style:normal;color:#0d9488;}
+  .printhead .meta{display:flex;flex-wrap:wrap;gap:4px 12px;margin-top:4px;font-size:8pt;color:#26364d;font-weight:700;}
+  .printhead .meta b{color:#0b1421;}
+  .printhead .unis{margin-top:4px;font-size:8.5pt;font-weight:800;color:#0b1421;}
+  .printhead .src{margin-top:3px;font-size:7pt;color:#5a6c86;font-weight:600;line-height:1.45;}
+}
 
 /* ═══════════ 모바일 · 태블릿 ═══════════ */
 .vswitch{display:none;}
@@ -435,6 +483,7 @@ html[data-theme="dark"][data-scale="5"] .foot .src{color:#c4b5fd;}
       <button class="toggle" type="button" id="tgScope" aria-pressed="false">전국에서 찾기</button>
       <button class="toggle" type="button" id="tgRec" aria-pressed="true">모집인원·경쟁률</button>
       <button class="toggle" type="button" id="tgEmpty" aria-pressed="true">빈 등급 숨기기</button>
+      <button class="toggle" type="button" id="tgStep" aria-pressed="false">등급 0.5 묶기</button>
       <div class="zoomctl" role="group" aria-label="표 크기 조절">
         <button type="button" id="tzOut" aria-label="표 축소">－</button>
         <span id="tzVal">100%</span>
@@ -442,11 +491,13 @@ html[data-theme="dark"][data-scale="5"] .foot .src{color:#c4b5fd;}
         <button type="button" id="tzFit" class="fit">한눈에</button>
       </div>
       <button class="toggle only-mobile" type="button" id="tgFilter" aria-pressed="false">필터</button>
+      <button class="toggle print-btn" type="button" id="btnPrint">🖨 인쇄 · PDF</button>
       <span class="hint" id="rowcount" style="margin-left:auto"></span>
     </div>
     <div class="convnote" id="convnote">5등급 변환값은 <b>부산광역시교육청학력개발원 진로진학지원센터</b>의 「부산 관내 5등급제 고1 1~2학기 등급평균 분석 자료」(88개교 14,331명) 누적비율을 기준으로 환산한 <b>참고용 추정치</b>입니다. 실제 대학 발표값은 9등급제 결과이며, 지역·학교·과목 구성에 따라 달라질 수 있습니다.</div>
     <div class="selbar" id="selbar">선택한 대학이 여기에 표시됩니다.</div>
     <div class="swipehint">두 손가락으로 넓히면 확대 · 좁히면 축소 · 두 번 두드리면 [한눈에] ↔ 100%</div>
+    <div class="printhead" id="printhead" aria-hidden="true"></div>
     <div class="tablewrap" id="tablewrap">
       <div class="blank" id="blank">
         <div class="big">🗺️</div>
@@ -539,7 +590,7 @@ function textWidth(str, fs){
   return u*fs;
 }
 
-const S = { type:'jonghap', sel:new Set(), cat:'전체', gy:'전체', zone:'전국', scale:'9',
+const S = { type:'jonghap', sel:new Set(), cat:'전체', gy:'전체', zone:'전국', scale:'9', gstep:0.1,
             showRec:true, hideEmpty:true, scopeAll:false, labelMode:'all', vb:[0,0,340,440] };
 
 /* ── 데이터 ── */
@@ -1098,15 +1149,16 @@ function renderTable(){
   }
   tbl.hidden = false; blank.style.display='none';
 
+  const st = S.gstep;
   const bucket = {};
   rows.forEach(r => {
-    const k = r[0]+'@'+(Math.floor(showVal(r[7])*10)/10).toFixed(1);
+    const k = r[0]+'@'+(Math.floor(showVal(r[7])/st)*st).toFixed(1);
     (bucket[k] = bucket[k]||[]).push(r);
   });
   const present = new Set(Object.keys(bucket).map(k=>k.split('@')[1]));
   const top = S.scale==='5' ? 5.0 : 9.0;
   const grades = [];
-  for (let g=1.0; g<=top+0.001; g=Math.round((g+0.1)*10)/10){
+  for (let g=1.0; g<=top+0.001; g=Math.round((g+st)*100)/100){
     const gs = g.toFixed(1);
     if (!S.hideEmpty || present.has(gs)) grades.push(gs);
   }
@@ -1120,7 +1172,8 @@ function renderTable(){
   let body = '';
   grades.forEach(gs => {
     const b = band(parseFloat(gs));
-    body += `<tr style="--gb:var(--g${b})"><th class="gcol">${gs}</th>` + cols.map(i => {
+    const glabel = st>=0.5 ? `${gs}<span class="gsub">~${(parseFloat(gs)+st-0.1).toFixed(1)}</span>` : gs;
+    body += `<tr style="--gb:var(--g${b})"><th class="gcol">${glabel}</th>` + cols.map(i => {
       const arr = bucket[i+'@'+gs];
       if (!arr) return '<td><span class="empty">·</span></td>';
       arr.sort((x,y)=>x[7]-y[7]);
@@ -1141,6 +1194,7 @@ function renderTable(){
   });
   $('tbody').innerHTML = body;
 
+  lastCols = cols.slice();
   const cuts = rows.map(r=>showVal(r[7]));
   $('fRow').textContent = rows.length.toLocaleString();
   $('fUniv').textContent = cols.length;
@@ -1225,6 +1279,7 @@ $('vSelect').onclick = () => setView('select');
 $('vTable').onclick  = () => setView('table');
 $('tgRec').onclick = e => { S.showRec=!S.showRec; e.currentTarget.setAttribute('aria-pressed',String(S.showRec)); renderTable(); };
 $('tgEmpty').onclick = e => { S.hideEmpty=!S.hideEmpty; e.currentTarget.setAttribute('aria-pressed',String(S.hideEmpty)); renderTable(); };
+$('tgStep').onclick = e => { S.gstep = S.gstep===0.5 ? 0.1 : 0.5; e.currentTarget.setAttribute('aria-pressed',String(S.gstep===0.5)); renderTable(); };
 $('tgScope').onclick = e => { S.scopeAll=!S.scopeAll; e.currentTarget.setAttribute('aria-pressed',String(S.scopeAll)); renderTable(); };
 function setScale(sc){
   S.scale = sc;
@@ -1309,6 +1364,78 @@ $('tzFit').onclick = fitTable;
     setTZ(TZ * (e.deltaY > 0 ? 0.92 : 1.08));
   }, {passive:false});
 })();
+/* ── A4 인쇄 / PDF 저장 ── */
+let lastCols = [];
+const pageStyle = document.createElement('style');
+document.head.appendChild(pageStyle);
+function buildPrintHead(cols){
+  const scaleTxt = S.scale==='5' ? '5등급제 변환값(원자료 9등급 70%컷)' : '학생부 환산등급 70%컷';
+  const d = new Date();
+  const ymd = `${d.getFullYear()}.${String(d.getMonth()+1).padStart(2,'0')}.${String(d.getDate()).padStart(2,'0')}`;
+  const q = ($('dsearch').value||'').trim();
+  $('printhead').innerHTML = `
+    <h2>모두의 2027 대입 배치표 <em>${S.type==='jonghap'?'학생부종합':'학생부교과'}</em></h2>
+    <div class="meta">
+      <span>등급 기준 <b>${scaleTxt}</b></span>
+      <span>전형 <b>${S.cat}</b></span>
+      <span>계열 <b>${S.gy}</b></span>
+      ${q?`<span>검색어 <b>${esc(q)}</b></span>`:''}
+      <span>대학 <b>${cols.length}개교</b></span>
+      <span>출력일 <b>${ymd}</b></span>
+    </div>
+    <div class="unis">${cols.map(i=>uName(i)).join(' · ')}</div>
+    <div class="src">자료 출처 · 대입정보포털 어디가 2026학년도 대학별 입시결과 공개자료${
+      S.scale==='5' ? ' / 5등급 변환 · 부산광역시교육청학력개발원 진로진학지원센터 「5등급제 고1 1~2학기 등급평균 분석 자료」(88개교 14,331명) 누적비 환산, 참고용 추정치' : ''
+    } · ⓒ All Teachers</div>`;
+}
+function doPrint(){
+  const t = $('tbl');
+  if (!t || t.hidden){ alert('먼저 대학을 선택해 배치표를 만들어 주세요.'); return; }
+  buildPrintHead(lastCols.length ? lastCols : [...S.sel].slice(0, MAX_COLS));
+  const n = document.querySelectorAll('#thead th').length - 1;
+  const landscape = n > 2;
+  pageStyle.textContent = `@page{size:A4 ${landscape?'landscape':'portrait'};margin:8mm;}`;
+  // 실제 표 크기를 재서 A4 한 장에 맞는 배율 계산 (96dpi 기준, 여백 8mm 제외)
+  const prevTZ = TZ, prevStep = S.gstep;
+  setTZ(1);
+  document.documentElement.style.setProperty('--pz', 1);
+  const pw = (landscape ? 1122 : 793) - 62;
+  const ph = (landscape ? 793 : 1122) - 62 - 100;   // 머리글 영역 제외
+  const MINZ = 0.6;                                  // 읽을 수 있는 최소 배율
+  const measure = () => {
+    const r = t.getBoundingClientRect();
+    return Math.min(pw/Math.max(1,r.width), ph/Math.max(1,r.height*0.62), 1); // 인쇄는 한 줄 압축이라 약 62% 높이
+  };
+  requestAnimationFrame(() => {
+    let sc = measure(), note = '';
+    if (sc < MINZ && S.gstep === 0.1){       // 한 장에 안 들어가면 등급을 0.5 단위로 묶어 재시도
+      S.gstep = 0.5; renderTable();
+      requestAnimationFrame(() => {
+        sc = measure();
+        note = '등급을 0.5 단위로 묶어 한 장에 맞췄습니다.';
+        finish(sc, note);
+      });
+      return;
+    }
+    finish(sc, note);
+  });
+  function finish(sc, note){
+    const pz = Math.max(MINZ, Math.min(1, Math.round(sc*1000)/1000));
+    document.documentElement.style.setProperty('--pz', pz);
+    if (note) $('printhead').insertAdjacentHTML('beforeend', `<div class="src">※ ${note}</div>`);
+    if (sc < MINZ) $('printhead').insertAdjacentHTML('beforeend',
+      '<div class="src">※ 내용이 많아 여러 장으로 인쇄됩니다(각 장에 대학명 머리행이 반복됩니다). 한 장에 담으려면 대학 수를 줄이거나 계열·전형 필터를 사용하세요.</div>');
+    setTimeout(() => {
+      try{ window.print(); }catch(_){}
+      setTZ(prevTZ);
+      if (S.gstep !== prevStep){ S.gstep = prevStep; renderTable(); }
+    }, 90);
+  }
+}
+$('btnPrint').onclick = doPrint;
+window.addEventListener('keydown', e => {
+  if ((e.ctrlKey||e.metaKey) && e.key.toLowerCase()==='p'){ e.preventDefault(); doPrint(); }
+});
 $('dsearch').addEventListener('input', renderTable);
 
 $('themeBtn').onclick = () => {
