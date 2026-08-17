@@ -208,6 +208,7 @@ mark{background:var(--ac-soft);color:var(--ac);border-radius:3px;padding:0 2px;}
 .blank{display:grid;place-items:center;gap:12px;height:100%;min-height:250px;color:var(--tx3);text-align:center;padding:34px 22px;}
 .blank .big{font-size:38px;opacity:.3;}
 .blank p{font-size:13.5px;line-height:1.75;}
+.only-mobile{display:none;}
 .swipehint{display:none;padding:6px 12px;background:var(--ac-soft);color:var(--ac);font-size:11.5px;font-weight:800;text-align:center;flex-shrink:0;}
 html[data-big="1"] .item .dp{font-size:17px;}
 html[data-big="1"] .item .jn{font-size:13.5px;}
@@ -262,6 +263,25 @@ html[data-big="1"] th .un{font-size:16.5px;}
   .ac{width:min(340px,88vw);}
   .toggle{padding:8px 10px;font-size:11px;}
   .selbar{padding:7px 10px;max-height:70px;}
+  /* 표 화면에서는 위쪽을 접어 표에 화면을 최대한 넘김 */
+  .only-mobile{display:inline-block;}
+  html[data-view="table"] .brand p{display:none;}
+  html[data-view="table"] .hstats{display:none;}
+  html[data-view="table"] .bar{display:none;}
+  html[data-view="table"][data-filters="1"] .bar{display:flex;}
+  html[data-view="table"] .hdr{padding:6px 11px;}
+  html[data-view="table"] #themeBtn{padding:5px 8px;font-size:10.5px;}
+  html[data-view="table"] .brand h1{font-size:14px;}
+  .mainbar{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;padding:7px 9px;}
+  .mainbar::-webkit-scrollbar{display:none;}
+  .searchbox{flex:0 0 auto;}
+  .searchbox .field{width:150px;}
+  #rowcount{display:none;}
+  .selbar{max-height:42px;padding:6px 9px;}
+  .swipehint{padding:5px 10px;font-size:11px;}
+  .swipehint.off{display:none;}
+  .foot{padding:5px 10px;gap:10px;font-size:10.5px;}
+  .foot span:nth-child(n+4){display:none;}
   thead th,tbody td{min-width:min(78vw,320px);}
   thead th{padding:10px 10px;}
   th .un{font-size:15px;}
@@ -278,6 +298,12 @@ html[data-big="1"] th .un{font-size:16.5px;}
   .pill{font-size:12.5px;padding:4px 7px 4px 12px;}
   .foot{font-size:10.5px;gap:9px;}
   .swipehint{display:block;}
+}
+@media (min-width:601px) and (max-width:980px){
+  thead th,tbody td{min-width:min(46vw,300px);}
+  .searchbox .field{width:190px;}
+  .item .dp{font-size:15.5px;}
+  .mapwrap{min-height:0;}
 }
 @media (max-width:600px){
   .brand h1{font-size:13.5px;}
@@ -386,6 +412,7 @@ html[data-big="1"] th .un{font-size:16.5px;}
       <button class="toggle" type="button" id="tgRec" aria-pressed="true">모집인원·경쟁률</button>
       <button class="toggle" type="button" id="tgEmpty" aria-pressed="true">빈 등급 숨기기</button>
       <button class="toggle" type="button" id="tgBig" aria-pressed="false">글자 크게</button>
+      <button class="toggle only-mobile" type="button" id="tgFilter" aria-pressed="false">필터</button>
       <span class="hint" id="rowcount" style="margin-left:auto"></span>
     </div>
     <div class="selbar" id="selbar">선택한 대학이 여기에 표시됩니다.</div>
@@ -1134,6 +1161,16 @@ $('vTable').onclick  = () => setView('table');
 $('tgRec').onclick = e => { S.showRec=!S.showRec; e.currentTarget.setAttribute('aria-pressed',String(S.showRec)); renderTable(); };
 $('tgEmpty').onclick = e => { S.hideEmpty=!S.hideEmpty; e.currentTarget.setAttribute('aria-pressed',String(S.hideEmpty)); renderTable(); };
 $('tgScope').onclick = e => { S.scopeAll=!S.scopeAll; e.currentTarget.setAttribute('aria-pressed',String(S.scopeAll)); renderTable(); };
+$('tgFilter').onclick = e => {
+  const on = document.documentElement.dataset.filters === '1';
+  document.documentElement.dataset.filters = on ? '0' : '1';
+  e.currentTarget.setAttribute('aria-pressed', String(!on));
+};
+$('tablewrap').addEventListener('scroll', () => {
+  const h = document.querySelector('.swipehint');
+  if (h) h.classList.add('off');
+}, {passive:true, once:true});
+setTimeout(()=>{ const h=document.querySelector('.swipehint'); if(h) h.classList.add('off'); }, 7000);
 $('tgBig').onclick = e => {
   const on = document.documentElement.dataset.big === '1';
   document.documentElement.dataset.big = on ? '0' : '1';
