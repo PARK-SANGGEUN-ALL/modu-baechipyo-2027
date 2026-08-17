@@ -208,6 +208,13 @@ mark{background:var(--ac-soft);color:var(--ac);border-radius:3px;padding:0 2px;}
 .blank{display:grid;place-items:center;gap:12px;height:100%;min-height:250px;color:var(--tx3);text-align:center;padding:34px 22px;}
 .blank .big{font-size:38px;opacity:.3;}
 .blank p{font-size:13.5px;line-height:1.75;}
+.swipehint{display:none;padding:6px 12px;background:var(--ac-soft);color:var(--ac);font-size:11.5px;font-weight:800;text-align:center;flex-shrink:0;}
+html[data-big="1"] .item .dp{font-size:17px;}
+html[data-big="1"] .item .jn{font-size:13.5px;}
+html[data-big="1"] .cut{font-size:16.5px;}
+html[data-big="1"] .rec{font-size:13px;}
+html[data-big="1"] tbody th.gcol{font-size:18px;}
+html[data-big="1"] th .un{font-size:16.5px;}
 .foot{display:flex;gap:14px;flex-wrap:wrap;padding:7px 14px;background:var(--surf);border-top:1px solid var(--line);font-size:10.5px;color:var(--tx3);font-weight:700;flex-shrink:0;}
 .foot b{color:var(--tx);font-family:'JetBrains Mono',monospace;}
 
@@ -255,8 +262,22 @@ mark{background:var(--ac-soft);color:var(--ac);border-radius:3px;padding:0 2px;}
   .ac{width:min(340px,88vw);}
   .toggle{padding:8px 10px;font-size:11px;}
   .selbar{padding:7px 10px;max-height:70px;}
-  thead th,tbody td{min-width:160px;}
-  .foot{font-size:10px;gap:9px;}
+  thead th,tbody td{min-width:min(78vw,320px);}
+  thead th{padding:10px 10px;}
+  th .un{font-size:15px;}
+  th .us{font-size:11.5px;}
+  tbody th.gcol{font-size:16px;padding:9px 4px;}
+  thead th.gcol{min-width:54px;width:54px;}
+  .item{padding:9px 11px;margin:5px 0;border-radius:10px;}
+  .item .dp{font-size:15px;line-height:1.4;}
+  .item .jn{font-size:12px;margin-top:3px;}
+  .cut{font-size:14.5px;padding:3px 9px;}
+  .cuttag{font-size:11px;}
+  .rec{font-size:12px;}
+  .selbar{max-height:96px;}
+  .pill{font-size:12.5px;padding:4px 7px 4px 12px;}
+  .foot{font-size:10.5px;gap:9px;}
+  .swipehint{display:block;}
 }
 @media (max-width:600px){
   .brand h1{font-size:13.5px;}
@@ -265,11 +286,8 @@ mark{background:var(--ac-soft);color:var(--ac);border-radius:3px;padding:0 2px;}
   .typetabs button{font-size:12px;padding:7px 12px;}
   .chip{font-size:11px;padding:5px 9px;}
   .basis{font-size:11px;padding:5px 10px;}
-  thead th,tbody td{min-width:150px;}
-  thead th{padding:7px 6px;}
+  thead th,tbody td{min-width:min(84vw,320px);}
   thead th.gcol{min-width:50px;width:50px;}
-  .item .dp{font-size:12px;}
-  .item{padding:6px 7px;}
   .legend span:not(.cnt){display:none;}
   .legend .cnt{margin-left:0;}
 }
@@ -367,9 +385,11 @@ mark{background:var(--ac-soft);color:var(--ac);border-radius:3px;padding:0 2px;}
       <button class="toggle" type="button" id="tgScope" aria-pressed="false">전국에서 찾기</button>
       <button class="toggle" type="button" id="tgRec" aria-pressed="true">모집인원·경쟁률</button>
       <button class="toggle" type="button" id="tgEmpty" aria-pressed="true">빈 등급 숨기기</button>
+      <button class="toggle" type="button" id="tgBig" aria-pressed="false">글자 크게</button>
       <span class="hint" id="rowcount" style="margin-left:auto"></span>
     </div>
     <div class="selbar" id="selbar">선택한 대학이 여기에 표시됩니다.</div>
+    <div class="swipehint">좌우로 밀면 다른 대학, 위아래로 밀면 다른 등급을 볼 수 있어요</div>
     <div class="tablewrap" id="tablewrap">
       <div class="blank" id="blank">
         <div class="big">🗺️</div>
@@ -420,6 +440,17 @@ const SIDO_SHORT = {'서울특별시':'서울','경기도':'경기','인천광�
   '대전광역시':'대전','세종특별자치시':'세종','전라북도':'전북','전라남도':'전남','광주광역시':'광주','제주특별자치도':'제주',
   '경상북도':'경북','경상남도':'경남','대구광역시':'대구','부산광역시':'부산','울산광역시':'울산'};
 const MAX_COLS = 20;
+/* 라벨 폭 계산: 한글·한자는 1글자 = 1em, 영문/숫자 0.56em, 괄호·점 0.42em */
+function textWidth(str, fs){
+  let u = 0;
+  for (const ch of str){
+    const c = ch.codePointAt(0);
+    if ((c>=0xAC00&&c<=0xD7A3)||(c>=0x3130&&c<=0x318F)||(c>=0x4E00&&c<=0x9FFF)||(c>=0x3000&&c<=0x303F)) u += 1.0;
+    else if ('()[]·.,-  '.includes(ch)) u += 0.42;
+    else u += 0.56;
+  }
+  return u*fs;
+}
 
 const S = { type:'jonghap', sel:new Set(), cat:'전체', gy:'전체', zone:'전국',
             showRec:true, hideEmpty:true, scopeAll:false, labelMode:'all', vb:[0,0,340,440] };
@@ -583,7 +614,7 @@ function drawMarkers(){
   const labels = pts.filter(wantLabel).map(p => {
     const nm = uName(p.i).replace('(제2캠퍼스)','2').replace('(제3캠퍼스)','3')
       .replace(' 제2캠퍼스','2').replace(' 제3캠퍼스','3').replace(' 제4캠퍼스','4');
-    const w = nm.length*fs*0.60 + fs*0.62, h = fs*1.36;
+    const w = textWidth(nm, fs) + fs*0.70, h = fs*1.36;
     let sx=0, sy=0, n=0;
     for (const q of pts){
       if (q===p) continue;
@@ -1103,6 +1134,12 @@ $('vTable').onclick  = () => setView('table');
 $('tgRec').onclick = e => { S.showRec=!S.showRec; e.currentTarget.setAttribute('aria-pressed',String(S.showRec)); renderTable(); };
 $('tgEmpty').onclick = e => { S.hideEmpty=!S.hideEmpty; e.currentTarget.setAttribute('aria-pressed',String(S.hideEmpty)); renderTable(); };
 $('tgScope').onclick = e => { S.scopeAll=!S.scopeAll; e.currentTarget.setAttribute('aria-pressed',String(S.scopeAll)); renderTable(); };
+$('tgBig').onclick = e => {
+  const on = document.documentElement.dataset.big === '1';
+  document.documentElement.dataset.big = on ? '0' : '1';
+  e.currentTarget.setAttribute('aria-pressed', String(!on));
+  e.currentTarget.textContent = on ? '글자 크게' : '글자 보통';
+};
 $('dsearch').addEventListener('input', renderTable);
 
 $('themeBtn').onclick = () => {
@@ -1132,7 +1169,16 @@ function refreshAll(){
   syncSelection();
 }
 let rz;
-window.addEventListener('resize', () => { clearTimeout(rz); rz = setTimeout(()=>{ S.vb = fitBox(zoneBox(S.zone)); drawMap(); }, 180); });
+function refit(){ clearTimeout(rz); rz = setTimeout(()=>{ S.vb = fitBox(zoneBox(S.zone)); drawMap(); }, 160); }
+window.addEventListener('resize', refit);
+window.addEventListener('orientationchange', refit);
+// 패널 크기가 바뀌면(분할선 조절·모바일 주소창 접힘 등) 지도를 다시 맞춤
+if (window.ResizeObserver){
+  let first = true;
+  new ResizeObserver(() => { if (first){ first = false; S.vb = fitBox(zoneBox(S.zone)); drawMap(); return; } refit(); }).observe($('mapwrap'));
+}
+// 웹폰트 로딩이 끝나면 라벨 폭이 달라지므로 한 번 더 그림
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(()=>{ S.vb = fitBox(zoneBox(S.zone)); drawMap(); });
 
 /* ── 시작 ── */
 buildZoneBar();
