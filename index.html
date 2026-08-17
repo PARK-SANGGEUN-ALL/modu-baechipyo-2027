@@ -24,7 +24,7 @@
 :root{
   --seoul:#38bdf8; --gg:#4ade80; --gw:#a78bfa; --cc:#fbbf24; --jl:#f472b6; --jj:#2dd4bf; --gs:#fb923c;
   --g1:#60a5fa; --g2:#22d3ee; --g3:#4ade80; --g4:#facc15; --g5:#fb923c; --g6:#f87171; --g7:#f43f5e;
-  --rad:12px;
+  --rad:12px; --tz:1; --colw:190px;
 }
 html[data-theme="dark"]{
   --bg:#0a1018; --surf:#121b2a; --surf2:#182338; --surf3:#22304a;
@@ -80,6 +80,15 @@ button{cursor:pointer;}
 .chip{border:1px solid var(--line);background:var(--surf);color:var(--tx2);border-radius:999px;padding:5px 11px;font-size:11.5px;font-weight:700;}
 .chip:hover{border-color:var(--ac);}
 .chip[aria-pressed="true"]{background:var(--ac-soft);border-color:var(--ac);color:var(--ac);font-weight:900;}
+.scaletabs button{font-size:12px;padding:6px 12px;border-width:2px;}
+.scaletabs button.on{background:#7c3aed;border-color:#7c3aed;color:#fff;box-shadow:0 0 0 4px rgba(124,58,237,.18);}
+html[data-theme="dark"] .scaletabs button.on{background:#a78bfa;border-color:#a78bfa;color:#1b1030;}
+.convnote{display:none;padding:7px 14px;background:rgba(124,58,237,.10);border-bottom:1px solid var(--line);font-size:11px;font-weight:700;color:#6d28d9;line-height:1.5;}
+html[data-theme="dark"] .convnote{color:#c4b5fd;background:rgba(167,139,250,.12);}
+html[data-scale="5"] .convnote{display:block;}
+.pct{font-size:10px;font-weight:800;color:#7c3aed;background:rgba(124,58,237,.12);border-radius:5px;padding:1px 6px;}
+html[data-theme="dark"] .pct{color:#c4b5fd;background:rgba(167,139,250,.18);}
+.orig{font-size:10px;font-weight:700;color:var(--tx3);}
 .basis{background:var(--ac);color:var(--ac-ink);border-radius:999px;padding:6px 13px;font-size:11.5px;font-weight:900;white-space:nowrap;box-shadow:0 0 0 4px var(--ac-soft);}
 .hint{margin-left:auto;font-size:10.5px;color:var(--tx3);line-height:1.45;}
 .hint b{color:var(--tx2);}
@@ -156,6 +165,13 @@ html[data-theme="dark"] .ptabs button#tabList{color:#c4b5fd;}
 
 /* ═══════════ 오른쪽 ═══════════ */
 .mainbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:9px 14px;background:var(--surf);border-bottom:1px solid var(--line);flex-shrink:0;}
+.mainbar>*{flex:0 0 auto;white-space:nowrap;}
+.toggle,.zoomctl button,.zb,.chip,.typetabs button{white-space:nowrap;word-break:keep-all;writing-mode:horizontal-tb;}
+.zoomctl{display:inline-flex;align-items:center;gap:2px;border:1px solid var(--line2);background:var(--surf2);border-radius:9px;padding:2px;}
+.zoomctl button{border:0;background:none;width:30px;height:30px;font-size:16px;font-weight:900;color:var(--tx2);border-radius:7px;line-height:1;}
+.zoomctl button:hover{background:var(--ac-soft);color:var(--ac);}
+.zoomctl .fit{width:auto;padding:0 10px;font-size:11.5px;font-weight:900;background:var(--ac);color:var(--ac-ink);}
+.zoomctl span{min-width:44px;text-align:center;font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:800;color:var(--tx2);}
 .searchbox{position:relative;}
 .searchbox .field{width:210px;padding-left:30px;}
 #uquick{border-color:#0ea5e9;background:rgba(14,165,233,.07);}
@@ -180,28 +196,31 @@ html[data-theme="dark"] #dsearch::placeholder{color:#c4b5fd;}
 .pill button{border:0;background:none;color:inherit;font-size:14px;line-height:1;padding:0 2px;opacity:.7;}
 .pill button:hover{opacity:1;}
 .warn{color:var(--g5);font-weight:800;}
-.tablewrap{flex:1;overflow:auto;min-height:0;background:var(--bg);}
+.tablewrap{flex:1;overflow:auto;min-height:0;background:var(--bg);touch-action:pan-x pan-y;overscroll-behavior:contain;}
 .tablewrap::-webkit-scrollbar{width:11px;height:11px;}
 .tablewrap::-webkit-scrollbar-thumb{background:var(--line2);border-radius:6px;}
-table{border-collapse:separate;border-spacing:0;width:max-content;min-width:100%;}
+table{border-collapse:separate;border-spacing:0;width:max-content;min-width:100%;zoom:var(--tz);}
 th,td{border-right:1px solid var(--line);border-bottom:1px solid var(--line);}
-thead th{position:sticky;top:0;z-index:3;background:var(--surf2);padding:9px 10px;text-align:center;min-width:186px;border-bottom:3px solid var(--uc,var(--line2));}
+thead th{position:sticky;top:0;z-index:3;background:var(--surf2);padding:8px 9px;text-align:center;min-width:var(--colw);border-bottom:3px solid var(--uc,var(--line2));}
 thead th.gcol{left:0;z-index:5;min-width:60px;width:60px;border-bottom-color:var(--line2);}
 th .un{display:block;font-size:13px;font-weight:900;line-height:1.2;color:var(--uc);}
 th .us{display:block;font-size:10.5px;color:var(--tx3);margin-top:3px;font-weight:700;}
 tbody th.gcol{position:sticky;left:0;z-index:2;background:var(--surf2);font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:800;text-align:center;padding:7px 4px;vertical-align:top;color:var(--gb);border-right:4px solid var(--gb);}
-tbody td{padding:4px;vertical-align:top;min-width:186px;background:var(--surf2);}
+tbody td{padding:3px;vertical-align:top;min-width:var(--colw);background:var(--surf2);}
 @supports (background:color-mix(in srgb,red 10%,transparent)){tbody td{background:color-mix(in srgb, var(--gb) calc(var(--tint) * 100%), transparent);}}
 .empty{display:block;text-align:center;color:var(--tx3);opacity:.4;font-size:12px;padding:5px 0;}
-.item{border:1px solid var(--line);border-left:4px solid var(--gb);border-radius:8px;padding:6px 8px;margin:3px 0;background:var(--surf);}
-.item .dp{font-size:12.5px;font-weight:800;line-height:1.35;word-break:keep-all;}
-.item .jn{font-size:10.5px;color:var(--tx3);margin-top:2px;line-height:1.35;font-weight:600;}
-.item .mm{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-top:4px;}
+.item{border:1px solid var(--line);border-left:4px solid var(--gb);border-radius:7px;padding:5px 7px;margin:2px 0;background:var(--surf);}
+.item .dp{font-size:12px;font-weight:800;line-height:1.3;word-break:keep-all;}
+.item .jn{font-size:10px;color:var(--tx3);margin-top:1px;line-height:1.3;font-weight:600;}
+.item .mm{display:flex;gap:5px;align-items:center;flex-wrap:wrap;margin-top:3px;}
+html[data-scale="5"] .item .cut{background:#7c3aed;color:#fff;}
+html[data-theme="dark"][data-scale="5"] .item .cut{background:#a78bfa;color:#160b2b;}
+html[data-scale="5"] .orig{width:100%;margin-top:1px;}
 .gsub{display:block;font-size:9px;font-weight:800;color:var(--tx3);margin-top:2px;letter-spacing:-.2px;}
 .cuttag{font-size:9.5px;font-weight:800;color:var(--tx3);}
-.cut{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:800;padding:2px 7px;border-radius:6px;background:var(--gb);color:#08101c;}
+.cut{font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:800;padding:1px 6px;border-radius:5px;background:var(--gb);color:#08101c;}
 html[data-theme="light"] .cut{color:#fff;}
-.rec{font-size:10.5px;color:var(--tx3);font-weight:600;}
+.rec{font-size:10px;color:var(--tx3);font-weight:600;}
 .rec b{color:var(--tx2);font-family:'JetBrains Mono',monospace;}
 .hot{color:var(--g5);font-weight:800;}
 mark{background:var(--ac-soft);color:var(--ac);border-radius:3px;padding:0 2px;}
@@ -210,14 +229,11 @@ mark{background:var(--ac-soft);color:var(--ac);border-radius:3px;padding:0 2px;}
 .blank p{font-size:13.5px;line-height:1.75;}
 .only-mobile{display:none;}
 .swipehint{display:none;padding:6px 12px;background:var(--ac-soft);color:var(--ac);font-size:11.5px;font-weight:800;text-align:center;flex-shrink:0;}
-html[data-big="1"] .item .dp{font-size:17px;}
-html[data-big="1"] .item .jn{font-size:13.5px;}
-html[data-big="1"] .cut{font-size:16.5px;}
-html[data-big="1"] .rec{font-size:13px;}
-html[data-big="1"] tbody th.gcol{font-size:18px;}
-html[data-big="1"] th .un{font-size:16.5px;}
 .foot{display:flex;gap:14px;flex-wrap:wrap;padding:7px 14px;background:var(--surf);border-top:1px solid var(--line);font-size:10.5px;color:var(--tx3);font-weight:700;flex-shrink:0;}
 .foot b{color:var(--tx);font-family:'JetBrains Mono',monospace;}
+.foot .src{color:var(--tx3);}
+html[data-scale="5"] .foot .src{color:#7c3aed;font-weight:800;}
+html[data-theme="dark"][data-scale="5"] .foot .src{color:#c4b5fd;}
 
 /* ═══════════ 모바일 · 태블릿 ═══════════ */
 .vswitch{display:none;}
@@ -246,6 +262,8 @@ html[data-big="1"] th .un{font-size:16.5px;}
   .bar{padding:7px 10px;gap:6px;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;}
   .bar::-webkit-scrollbar{display:none;}
   .fgroup{padding-left:8px;flex-wrap:nowrap;}
+  .scaletabs{order:-1;}
+  .scaletabs button{font-size:11.5px;padding:6px 11px;}
   .chip,.typetabs button{white-space:nowrap;}
   .hint{display:none;}
   .basis{order:-1;}
@@ -282,27 +300,29 @@ html[data-big="1"] th .un{font-size:16.5px;}
   .swipehint.off{display:none;}
   .foot{padding:5px 10px;gap:10px;font-size:10.5px;}
   .foot span:nth-child(n+4){display:none;}
-  thead th,tbody td{min-width:min(78vw,320px);}
-  thead th{padding:10px 10px;}
-  th .un{font-size:15px;}
-  th .us{font-size:11.5px;}
-  tbody th.gcol{font-size:16px;padding:9px 4px;}
-  thead th.gcol{min-width:54px;width:54px;}
-  .item{padding:9px 11px;margin:5px 0;border-radius:10px;}
-  .item .dp{font-size:15px;line-height:1.4;}
-  .item .jn{font-size:12px;margin-top:3px;}
-  .cut{font-size:14.5px;padding:3px 9px;}
-  .cuttag{font-size:11px;}
-  .rec{font-size:12px;}
-  .selbar{max-height:96px;}
-  .pill{font-size:12.5px;padding:4px 7px 4px 12px;}
+  /* 표: 두 대학이 나란히 보이는 폭 + 두 손가락으로 확대/축소 */
+  :root{--colw:172px;}
+  thead th{padding:8px 7px;}
+  th .un{font-size:13px;}
+  th .us{font-size:10px;}
+  tbody th.gcol{font-size:13.5px;padding:7px 3px;}
+  thead th.gcol{min-width:44px;width:44px;}
+  .item{padding:6px 7px;margin:2px 0;}
+  .item .dp{font-size:12px;line-height:1.3;}
+  .item .jn{font-size:10px;}
+  .cut{font-size:11.5px;}
+  .cuttag{font-size:9.5px;}
+  .rec{font-size:10px;}
+  .selbar{max-height:60px;}
+  .pill{font-size:11.5px;padding:3px 6px 3px 10px;}
   .foot{font-size:10.5px;gap:9px;}
   .swipehint{display:block;}
+  .zoomctl button{width:34px;height:34px;font-size:18px;}
+  .zoomctl span{min-width:42px;font-size:11px;}
 }
 @media (min-width:601px) and (max-width:980px){
-  thead th,tbody td{min-width:min(46vw,300px);}
+  :root{--colw:200px;}
   .searchbox .field{width:190px;}
-  .item .dp{font-size:15.5px;}
   .mapwrap{min-height:0;}
 }
 @media (max-width:600px){
@@ -312,8 +332,8 @@ html[data-big="1"] th .un{font-size:16.5px;}
   .typetabs button{font-size:12px;padding:7px 12px;}
   .chip{font-size:11px;padding:5px 9px;}
   .basis{font-size:11px;padding:5px 10px;}
-  thead th,tbody td{min-width:min(84vw,320px);}
-  thead th.gcol{min-width:50px;width:50px;}
+  :root{--colw:164px;}
+  thead th.gcol{min-width:42px;width:42px;}
   .legend span:not(.cnt){display:none;}
   .legend .cnt{margin-left:0;}
 }
@@ -347,7 +367,11 @@ html[data-big="1"] th .un{font-size:16.5px;}
   <div class="fgroup" id="catChips"><span class="flabel">전형</span></div>
   <div class="fgroup" id="gyChips"><span class="flabel">계열</span></div>
   <span class="basis">기준 70%컷</span>
-  <div class="hint"><b>등급 기준</b> 최종등록자 <b>학생부 환산등급 70%컷</b>(70%가 이 등급 이내) · 어디가 2026학년도 결과공개 · 지원 전 모집요강 확인</div>
+  <div class="typetabs scaletabs" role="group" aria-label="등급 체계">
+    <button type="button" id="sc9" class="on">9등급제</button>
+    <button type="button" id="sc5">5등급 변환</button>
+  </div>
+  <div class="hint"><b>등급 기준</b> 최종등록자 <b>학생부 환산등급 70%컷</b> · 출처 대입정보포털 어디가 2026학년도 결과공개<br><b>5등급 변환</b> 부산광역시교육청학력개발원 진로진학지원센터 「5등급제 고1 1~2학기 등급평균 분석 자료」 누적비 환산(참고용)</div>
 </div>
 
 <div class="app">
@@ -411,12 +435,18 @@ html[data-big="1"] th .un{font-size:16.5px;}
       <button class="toggle" type="button" id="tgScope" aria-pressed="false">전국에서 찾기</button>
       <button class="toggle" type="button" id="tgRec" aria-pressed="true">모집인원·경쟁률</button>
       <button class="toggle" type="button" id="tgEmpty" aria-pressed="true">빈 등급 숨기기</button>
-      <button class="toggle" type="button" id="tgBig" aria-pressed="false">글자 크게</button>
+      <div class="zoomctl" role="group" aria-label="표 크기 조절">
+        <button type="button" id="tzOut" aria-label="표 축소">－</button>
+        <span id="tzVal">100%</span>
+        <button type="button" id="tzIn" aria-label="표 확대">＋</button>
+        <button type="button" id="tzFit" class="fit">한눈에</button>
+      </div>
       <button class="toggle only-mobile" type="button" id="tgFilter" aria-pressed="false">필터</button>
       <span class="hint" id="rowcount" style="margin-left:auto"></span>
     </div>
+    <div class="convnote" id="convnote">5등급 변환값은 <b>부산광역시교육청학력개발원 진로진학지원센터</b>의 「부산 관내 5등급제 고1 1~2학기 등급평균 분석 자료」(88개교 14,331명) 누적비율을 기준으로 환산한 <b>참고용 추정치</b>입니다. 실제 대학 발표값은 9등급제 결과이며, 지역·학교·과목 구성에 따라 달라질 수 있습니다.</div>
     <div class="selbar" id="selbar">선택한 대학이 여기에 표시됩니다.</div>
-    <div class="swipehint">좌우로 밀면 다른 대학, 위아래로 밀면 다른 등급을 볼 수 있어요</div>
+    <div class="swipehint">두 손가락으로 넓히면 확대 · 좁히면 축소 · 두 번 두드리면 [한눈에] ↔ 100%</div>
     <div class="tablewrap" id="tablewrap">
       <div class="blank" id="blank">
         <div class="big">🗺️</div>
@@ -430,7 +460,8 @@ html[data-big="1"] th .un{font-size:16.5px;}
       <span>표시 <b id="fRow">0</b>개 모집단위</span>
       <span>선택 <b id="fUniv">0</b>개교</span>
       <span>등급 범위 <b id="fRange">—</b></span>
-      <span>행 = <b>학생부 환산등급 70%컷</b>(0.1 단위) · 열 = 대학 · 칸 = 모집단위</span>
+      <span class="src">출처 · 어디가 2026 결과공개 / 5등급 변환 · 부산시교육청학력개발원</span>
+      <span id="footnote">행 = <b>학생부 환산등급 70%컷</b>(0.1 단위) · 열 = 대학 · 칸 = 모집단위</span>
     </div>
   </main>
 </div>
@@ -467,6 +498,35 @@ const SIDO_SHORT = {'서울특별시':'서울','경기도':'경기','인천광�
   '대전광역시':'대전','세종특별자치시':'세종','전라북도':'전북','전라남도':'전남','광주광역시':'광주','제주특별자치도':'제주',
   '경상북도':'경북','경상남도':'경남','대구광역시':'대구','부산광역시':'부산','울산광역시':'울산'};
 const MAX_COLS = 20;
+/* ── 9등급제 ↔ 5등급제 환산표 ──
+   출처: 부산광역시교육청학력개발원 진로진학지원센터
+        「부산광역시교육청 관내 5등급제 고1 1~2학기 등급평균 분석 자료」(88개교 14,331명)
+   각 행 = [9등급 등급평균, 5등급 등급평균, 누적비율(%)] · 누적비율을 매개로 대응 */
+const CONV = [
+ [1.15,1.00,0.30],[1.21,1.00,0.45],[1.26,1.00,0.60],[1.45,1.00,1.30],
+ [1.59,1.08,1.87],[1.78,1.16,2.76],[1.98,1.24,3.65],[2.14,1.33,4.81],
+ [2.32,1.42,5.92],[2.45,1.50,7.08],[2.72,1.66,9.51],[3.03,1.83,13.03],
+ [3.35,2.00,17.42],[3.60,2.16,21.04],[3.91,2.33,26.02],[4.20,2.50,31.39],
+ [4.46,2.66,36.58],[4.73,2.83,42.93],[5.03,3.00,49.98],[5.28,3.16,55.84],
+ [5.58,3.33,62.84],[5.86,3.50,69.09],[6.08,3.66,74.08],[6.37,3.83,79.74],
+ [6.67,4.00,84.90],[6.93,4.16,88.48],[7.20,4.33,91.75],[7.48,4.50,94.07],
+ [7.71,4.66,95.66],[8.00,4.83,97.03],[9.00,5.00,100.00]
+];
+function conv9to5(v){
+  if (v <= CONV[0][0]) return {g5:CONV[0][1], pct:CONV[0][2]};
+  const L = CONV[CONV.length-1];
+  if (v >= L[0]) return {g5:L[1], pct:L[2]};
+  for (let i=1;i<CONV.length;i++){
+    const a=CONV[i-1], b=CONV[i];
+    if (v <= b[0]){
+      const t=(v-a[0])/(b[0]-a[0]);
+      return {g5: Math.round((a[1]+(b[1]-a[1])*t)*100)/100,
+              pct: Math.round((a[2]+(b[2]-a[2])*t)*100)/100};
+    }
+  }
+  return {g5:L[1], pct:L[2]};
+}
+const showVal = v => S.scale==='5' ? conv9to5(v).g5 : v;
 /* 라벨 폭 계산: 한글·한자는 1글자 = 1em, 영문/숫자 0.56em, 괄호·점 0.42em */
 function textWidth(str, fs){
   let u = 0;
@@ -479,7 +539,7 @@ function textWidth(str, fs){
   return u*fs;
 }
 
-const S = { type:'jonghap', sel:new Set(), cat:'전체', gy:'전체', zone:'전국',
+const S = { type:'jonghap', sel:new Set(), cat:'전체', gy:'전체', zone:'전국', scale:'9',
             showRec:true, hideEmpty:true, scopeAll:false, labelMode:'all', vb:[0,0,340,440] };
 
 /* ── 데이터 ── */
@@ -872,7 +932,7 @@ function showTip(i, e){
   if (!s) return hideTip();
   const rc = $('mapwrap').getBoundingClientRect();
   t.innerHTML = `<b style="color:${GVAR[uGroup(i)]};font-size:13px">${uName(i)}</b><br>
-    <span style="color:var(--tx2)">${uSido(i)} · 모집단위 ${s.n}개 · 최저 ${s.min.toFixed(2)}등급</span><br>
+    <span style="color:var(--tx2)">${uSido(i)} · 모집단위 ${s.n}개 · 최저 ${showVal(s.min).toFixed(2)}등급${S.scale==='5'?'(변환)':''}</span><br>
     <span style="color:var(--tx3);font-size:10px">누르면 배치표에 추가</span>`;
   t.style.display='block';
   let x = e.clientX-rc.left+16, y = e.clientY-rc.top+14;
@@ -913,7 +973,7 @@ function buildList(){
       html += `<div class="uc" data-u="${i}" role="button" tabindex="0" aria-pressed="${S.sel.has(i)}">
         <span class="box">✓</span>
         <span><span class="nm" style="color:var(${g.v})">${uName(i)}</span>
-        <span class="mt">${uSido(i)} · 최저 ${s.min.toFixed(2)}등급</span></span>
+        <span class="mt">${uSido(i)} · 최저 ${showVal(s.min).toFixed(2)}등급${S.scale==='5'?' (변환)':''}</span></span>
         <span class="cn">${s.n}</span></div>`;
     });
     html += '</div>';
@@ -993,7 +1053,7 @@ $('selbar').addEventListener('click', e => {
 });
 
 /* ── 배치표 ── */
-const band = g => g<2?1:g<3?2:g<4?3:g<5?4:g<6?5:g<7?6:7;
+const band = g => S.scale==='5' ? Math.min(7, Math.max(1, Math.ceil(g*7/5)-0)) : (g<2?1:g<3?2:g<4?3:g<5?4:g<6?5:g<7?6:7);
 const esc = s => s.replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
 function hl(text, q){
   if (!q) return esc(text);
@@ -1040,17 +1100,18 @@ function renderTable(){
 
   const bucket = {};
   rows.forEach(r => {
-    const k = r[0]+'@'+(Math.floor(r[7]*10)/10).toFixed(1);
+    const k = r[0]+'@'+(Math.floor(showVal(r[7])*10)/10).toFixed(1);
     (bucket[k] = bucket[k]||[]).push(r);
   });
   const present = new Set(Object.keys(bucket).map(k=>k.split('@')[1]));
+  const top = S.scale==='5' ? 5.0 : 9.0;
   const grades = [];
-  for (let g=1.0; g<=9.001; g=Math.round((g+0.1)*10)/10){
+  for (let g=1.0; g<=top+0.001; g=Math.round((g+0.1)*10)/10){
     const gs = g.toFixed(1);
     if (!S.hideEmpty || present.has(gs)) grades.push(gs);
   }
 
-  $('thead').innerHTML = '<tr><th class="gcol">등급<span class="gsub">70%컷</span></th>' + cols.map(i => {
+  $('thead').innerHTML = `<tr><th class="gcol">등급<span class="gsub">${S.scale==='5'?'5등급 변환':'70%컷'}</span></th>` + cols.map(i => {
     const c = GVAR[uGroup(i)];
     return `<th style="--uc:${c}"><span class="un">${uName(i)}</span>
       <span class="us">${uSido(i)} · ${ST[i].n}개 모집단위</span></th>`;
@@ -1067,16 +1128,20 @@ function renderTable(){
         const rec = S.showRec && (r[5]||r[6])
           ? `<span class="rec">${r[5]?`모집 <b>${r[5]}</b>명`:''}${r[6]?` · <span class="hot">${r[6]}:1</span>`:''}</span>` : '';
         const cat = DATA.cats[r[3]];
+        const c5 = S.scale==='5' ? conv9to5(r[7]) : null;
+        const main = c5 ? `<span class="cut">${c5.g5.toFixed(2)}</span><span class="cuttag">5등급 변환</span>
+            <span class="pct">상위 ${c5.pct.toFixed(1)}%</span><span class="orig">원자료 9등급 ${r[7].toFixed(2)}</span>`
+          : `<span class="cut">${r[7].toFixed(2)}</span><span class="cuttag">70%컷</span>`;
         return `<div class="item">
           <div class="dp">${hl(P.d[r[1]], q)}</div>
           <div class="jn">${hl(P.j[r[2]], q)}${cat!=='일반'?` · ${cat}`:''}</div>
-          <div class="mm"><span class="cut">${r[7].toFixed(2)}</span><span class="cuttag">70%컷</span>${rec}</div></div>`;
+          <div class="mm">${main}${rec}</div></div>`;
       }).join('') + '</td>';
     }).join('') + '</tr>';
   });
   $('tbody').innerHTML = body;
 
-  const cuts = rows.map(r=>r[7]);
+  const cuts = rows.map(r=>showVal(r[7]));
   $('fRow').textContent = rows.length.toLocaleString();
   $('fUniv').textContent = cols.length;
   $('fRange').textContent = cuts.length ? `${Math.min(...cuts).toFixed(2)} ~ ${Math.max(...cuts).toFixed(2)}` : '—';
@@ -1161,6 +1226,21 @@ $('vTable').onclick  = () => setView('table');
 $('tgRec').onclick = e => { S.showRec=!S.showRec; e.currentTarget.setAttribute('aria-pressed',String(S.showRec)); renderTable(); };
 $('tgEmpty').onclick = e => { S.hideEmpty=!S.hideEmpty; e.currentTarget.setAttribute('aria-pressed',String(S.hideEmpty)); renderTable(); };
 $('tgScope').onclick = e => { S.scopeAll=!S.scopeAll; e.currentTarget.setAttribute('aria-pressed',String(S.scopeAll)); renderTable(); };
+function setScale(sc){
+  S.scale = sc;
+  document.documentElement.dataset.scale = sc;
+  $('sc9').classList.toggle('on', sc==='9');
+  $('sc5').classList.toggle('on', sc==='5');
+  const b = document.querySelector('.basis');
+  if (b) b.textContent = sc==='5' ? '기준 70%컷 → 5등급 변환' : '기준 70%컷';
+  const fn = $('footnote');
+  if (fn) fn.innerHTML = sc==='5'
+    ? '행 = <b>5등급제 변환값</b>(0.1 단위) · 원자료는 9등급제 70%컷 · 출처 부산시교육청 누적비 환산'
+    : '행 = <b>학생부 환산등급 70%컷</b>(0.1 단위) · 열 = 대학 · 칸 = 모집단위';
+  buildList(); renderTable(); drawMarkers();
+}
+$('sc9').onclick = () => setScale('9');
+$('sc5').onclick = () => setScale('5');
 $('tgFilter').onclick = e => {
   const on = document.documentElement.dataset.filters === '1';
   document.documentElement.dataset.filters = on ? '0' : '1';
@@ -1171,12 +1251,64 @@ $('tablewrap').addEventListener('scroll', () => {
   if (h) h.classList.add('off');
 }, {passive:true, once:true});
 setTimeout(()=>{ const h=document.querySelector('.swipehint'); if(h) h.classList.add('off'); }, 7000);
-$('tgBig').onclick = e => {
-  const on = document.documentElement.dataset.big === '1';
-  document.documentElement.dataset.big = on ? '0' : '1';
-  e.currentTarget.setAttribute('aria-pressed', String(!on));
-  e.currentTarget.textContent = on ? '글자 크게' : '글자 보통';
-};
+/* ── 표 확대·축소 (버튼 + 두 손가락 확대) ── */
+let TZ = 1;
+function setTZ(v){
+  TZ = Math.min(2.0, Math.max(0.35, Math.round(v*100)/100));
+  document.documentElement.style.setProperty('--tz', TZ);
+  const el = $('tzVal'); if (el) el.textContent = Math.round(TZ*100)+'%';
+}
+$('tzIn').onclick  = () => setTZ(TZ*1.15);
+$('tzOut').onclick = () => setTZ(TZ/1.15);
+/* 선택한 대학 전체가 한 화면에 들어오도록 배율 자동 계산 */
+function fitTable(){
+  const t = $('tbl'), wrap = $('tablewrap');
+  if (!t || t.hidden) return;
+  setTZ(1);
+  requestAnimationFrame(() => {
+    const tw = t.getBoundingClientRect().width || t.scrollWidth || 1;
+    const avail = (wrap.clientWidth || 1) - 2;
+    setTZ(avail/tw);
+    wrap.scrollLeft = 0;
+  });
+}
+$('tzFit').onclick = fitTable;
+(function(){
+  const wrap = $('tablewrap');
+  const pts = new Map();
+  let base = null;
+  wrap.addEventListener('pointerdown', e => { if (e.pointerType!=='mouse') pts.set(e.pointerId,{x:e.clientX,y:e.clientY}); });
+  wrap.addEventListener('pointermove', e => {
+    if (!pts.has(e.pointerId)) return;
+    pts.set(e.pointerId,{x:e.clientX,y:e.clientY});
+    if (pts.size === 2){
+      const [a,b] = [...pts.values()];
+      const d = Math.hypot(a.x-b.x, a.y-b.y);
+      if (!base) base = {d, tz:TZ};
+      else if (base.d > 10){ setTZ(base.tz * (d/base.d)); e.preventDefault(); }
+    }
+  }, {passive:false});
+  const clear = e => { pts.delete(e.pointerId); if (pts.size < 2) base = null; };
+  wrap.addEventListener('pointerup', clear);
+  wrap.addEventListener('pointercancel', clear);
+  wrap.addEventListener('pointerleave', clear);
+  // 더블탭·더블클릭 = 한눈에 ↔ 100%
+  let lastTap = 0;
+  const toggleFit = () => { TZ > 0.99 ? fitTable() : setTZ(1); };
+  wrap.addEventListener('dblclick', toggleFit);
+  wrap.addEventListener('pointerup', e => {
+    if (e.pointerType === 'mouse' || pts.size) return;
+    const now = Date.now();
+    if (now - lastTap < 320) toggleFit();
+    lastTap = now;
+  });
+  // 데스크톱: Ctrl + 휠로 표 확대·축소
+  wrap.addEventListener('wheel', e => {
+    if (!e.ctrlKey) return;
+    e.preventDefault();
+    setTZ(TZ * (e.deltaY > 0 ? 0.92 : 1.08));
+  }, {passive:false});
+})();
 $('dsearch').addEventListener('input', renderTable);
 
 $('themeBtn').onclick = () => {
@@ -1218,13 +1350,17 @@ if (window.ResizeObserver){
 if (document.fonts && document.fonts.ready) document.fonts.ready.then(()=>{ S.vb = fitBox(zoneBox(S.zone)); drawMap(); });
 
 /* ── 시작 ── */
+document.documentElement.dataset.scale='9';
 buildZoneBar();
 buildChips();
 rebuildStats();
 setZone('전국');
 buildList();
 syncSelection();
-if (window.matchMedia && window.matchMedia('(max-width:980px)').matches) setView('select');
+if (window.matchMedia && window.matchMedia('(max-width:980px)').matches){
+  setView('select');
+  setTZ(window.innerWidth < 520 ? 0.85 : 0.95);   // 폰은 조금 축소해 두 대학 이상 한눈에
+}
 </script>
 </body>
 </html>
