@@ -9,14 +9,14 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <meta property="og:type" content="website">
-<meta property="og:title" content="모두의진학 | 2027 대입 배치표 · 학생부종합 + 학생부교과">
-<meta property="og:description" content="진학의 정보를, 모두에게 · 전국 200개교 16,541개 모집단위 · 환산등급 70%컷 · 5등급제 변환 지원">
+<meta property="og:title" content="모두의 2027 대입 배치표 · 학생부종합 + 학생부교과">
+<meta property="og:description" content="전국 200개교 · 모집단위 16,541개 · 학생부 환산등급 70%컷 기준 배치표">
 <meta property="og:image" content="thumbnail.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="thumbnail.png">
-<title>모두의진학 | 2027 대입 배치표 (학생부종합·학생부교과)</title>
+<title>모두의 2027 대입 배치표 · 학생부종합 + 학생부교과</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
@@ -85,6 +85,12 @@ html[data-theme="dark"] .logo{filter:brightness(1.35) saturate(1.05);}
 .chip{border:1px solid var(--line);background:var(--surf);color:var(--tx2);border-radius:999px;padding:5px 11px;font-size:11.5px;font-weight:700;}
 .chip:hover{border-color:var(--ac);}
 .chip[aria-pressed="true"]{background:var(--ac-soft);border-color:var(--ac);color:var(--ac);font-weight:900;}
+.medgroup .chip{border-color:#e0b3c8;color:#a3155c;}
+.medgroup .chip[aria-pressed="true"]{background:#be185d;border-color:#be185d;color:#fff;font-weight:900;box-shadow:0 0 0 3px rgba(190,24,93,.18);}
+html[data-theme="dark"] .medgroup .chip{border-color:#7c3b57;color:#f9a8c8;}
+html[data-theme="dark"] .medgroup .chip[aria-pressed="true"]{background:#f472b6;border-color:#f472b6;color:#3b0620;}
+.medtag{font-size:9.5px;font-weight:900;color:#fff;background:#be185d;border-radius:5px;padding:1px 5px;margin-left:4px;vertical-align:1px;}
+html[data-theme="dark"] .medtag{background:#f472b6;color:#3b0620;}
 .scaletabs button{font-size:12px;padding:6px 12px;border-width:2px;}
 .scaletabs button.on{background:#7c3aed;border-color:#7c3aed;color:#fff;box-shadow:0 0 0 4px rgba(124,58,237,.18);}
 html[data-theme="dark"] .scaletabs button.on{background:#a78bfa;border-color:#a78bfa;color:#1b1030;}
@@ -280,6 +286,7 @@ html[data-theme="dark"][data-scale="5"] .foot .src{color:#c4b5fd;}
   .cut{color:#fff!important;}
   .empty{color:#9fb2cb!important;}
   .printhead{display:block!important;border-bottom:2.5px solid #018C96;padding-bottom:6px;margin-bottom:8px;}
+  .medtag{background:#be185d!important;color:#fff!important;font-size:6.5pt!important;}
   .printhead .plogo{width:150px;height:28px;background:var(--logo) no-repeat left center/contain;margin-bottom:3px;}
   .printhead h2{font-size:15pt;font-weight:900;letter-spacing:-.4px;}
   .printhead h2 em{font-style:normal;color:#0d9488;}
@@ -424,6 +431,7 @@ html[data-theme="dark"][data-scale="5"] .foot .src{color:#c4b5fd;}
   </div>
   <div class="fgroup" id="catChips"><span class="flabel">전형</span></div>
   <div class="fgroup" id="gyChips"><span class="flabel">계열</span></div>
+  <div class="fgroup medgroup" id="medChips"><span class="flabel">상위권</span></div>
   <span class="basis">기준 70%컷</span>
   <div class="typetabs scaletabs" role="group" aria-label="등급 체계">
     <button type="button" id="sc9" class="on">9등급제</button>
@@ -559,6 +567,25 @@ const SIDO_SHORT = {'서울특별시':'서울','경기도':'경기','인천광�
   '대전광역시':'대전','세종특별자치시':'세종','전라북도':'전북','전라남도':'전남','광주광역시':'광주','제주특별자치도':'제주',
   '경상북도':'경북','경상남도':'경남','대구광역시':'대구','부산광역시':'부산','울산광역시':'울산'};
 const MAX_COLS = 20;
+/* ── 의·치·한·약·수 (상위권 계열) 판별 : 모집단위명 기준 ── */
+const MEDKINDS = ['의','치','한','약','수'];
+const MEDLABEL = {'의':'의대','치':'치대','한':'한의대','약':'약대','수':'수의대'};
+function medKind(n){
+  if (/창의/.test(n)) return null;
+  if (/치의(예|학)/.test(n)) return '치';
+  if (/한의(예|학)/.test(n)) return '한';
+  if (/수의(예|학)/.test(n)) return '수';
+  if (/약학/.test(n) && !/(제약|신약|의약|한약|화장품)/.test(n)) return '약';
+  if (/(의예|의학과|의학부|의과대학|의학전공)/.test(n) && !/(식물|수산|스포츠|재활|바이오|해양|생명|한방|축산)/.test(n)) return '의';
+  return null;
+}
+const MEDCACHE = {};
+function medMap(){
+  if (MEDCACHE[S.type]) return MEDCACHE[S.type];
+  const m = pack().d.map(medKind);
+  MEDCACHE[S.type] = m;
+  return m;
+}
 /* ── 9등급제 ↔ 5등급제 환산표 ──
    출처: 부산광역시교육청학력개발원 진로진학지원센터
         「부산광역시교육청 관내 5등급제 고1 1~2학기 등급평균 분석 자료」(88개교 14,331명)
@@ -600,7 +627,7 @@ function textWidth(str, fs){
   return u*fs;
 }
 
-const S = { type:'jonghap', sel:new Set(), cat:'전체', gy:'전체', zone:'전국', scale:'9', gstep:0.1,
+const S = { type:'jonghap', sel:new Set(), cat:'전체', gy:'전체', med:'전체', zone:'전국', scale:'9', gstep:0.1,
             showRec:true, hideEmpty:true, scopeAll:false, labelMode:'all', vb:[0,0,340,440] };
 
 /* ── 데이터 ── */
@@ -611,6 +638,11 @@ const rowsAll = () => pack().r;
 function passFilter(r){
   if (S.cat !== '전체' && DATA.cats[r[3]] !== S.cat) return false;
   if (S.gy  !== '전체' && DATA.gys[r[4]]  !== S.gy)  return false;
+  if (S.med !== '전체'){
+    const k = medMap()[r[1]];
+    if (!k) return false;
+    if (S.med !== '의치한약수' && k !== S.med) return false;
+  }
   return true;
 }
 let ST = {};
@@ -1196,7 +1228,7 @@ function renderTable(){
             <span class="pct">상위 ${c5.pct.toFixed(1)}%</span><span class="orig">원자료 9등급 ${r[7].toFixed(2)}</span>`
           : `<span class="cut">${r[7].toFixed(2)}</span><span class="cuttag">70%컷</span>`;
         return `<div class="item">
-          <div class="dp">${hl(P.d[r[1]], q)}</div>
+          <div class="dp">${hl(P.d[r[1]], q)}${(()=>{const k=medMap()[r[1]];return k?`<span class="medtag">${MEDLABEL[k]}</span>`:'';})()}</div>
           <div class="jn">${hl(P.j[r[2]], q)}${cat!=='일반'?` · ${cat}`:''}</div>
           <div class="mm">${main}${rec}</div></div>`;
       }).join('') + '</td>';
@@ -1225,6 +1257,15 @@ function buildChips(){
     b.setAttribute('aria-pressed', String(S.cat===c));
     b.onclick = () => { S.cat=c; refreshAll(); };
     cbox.appendChild(b);
+  });
+  const mbox = $('medChips');
+  mbox.querySelectorAll('.chip').forEach(e=>e.remove());
+  [['전체','전체'],['의치한약수','의치한약수'],['의','의대'],['치','치대'],['한','한의대'],['약','약대'],['수','수의대']].forEach(([v,lab]) => {
+    const b = document.createElement('button');
+    b.type='button'; b.className='chip'; b.textContent = lab;
+    b.setAttribute('aria-pressed', String(S.med===v));
+    b.onclick = () => { S.med = v; refreshAll(); };
+    mbox.appendChild(b);
   });
   ['전체','인문사회계열','자연과학계열','공학계열','의학계열','예체능계열'].forEach(g => {
     const b = document.createElement('button');
@@ -1390,6 +1431,7 @@ function buildPrintHead(cols){
       <span>등급 기준 <b>${scaleTxt}</b></span>
       <span>전형 <b>${S.cat}</b></span>
       <span>계열 <b>${S.gy}</b></span>
+      ${S.med!=='전체'?`<span>상위권 <b>${S.med==='의치한약수'?'의치한약수 전체':MEDLABEL[S.med]}</b></span>`:''}
       ${q?`<span>검색어 <b>${esc(q)}</b></span>`:''}
       <span>대학 <b>${cols.length}개교</b></span>
       <span>출력일 <b>${ymd}</b></span>
